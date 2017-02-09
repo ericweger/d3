@@ -8,28 +8,26 @@ body {
 #gamecontainer {
 margin: 2rem;
 display: flex;
+flex-wrap: wrap;
 
 }
 #controls {
 	order: 2;
-	margin-left: 2em;
+	margin: 2em;
 }
 #game {
-	width: 11em;
-	height: 11em;
 	display: flex;
 	flex-direction: column;
-	flex-wrap: wrap;
-	justify-content: space-around;
-	align-content: space-around;
+	justify-content: flex-start;
 	border: 1px solid black;
 	background-color: black;
+	padding: 0.08em;
 }
 #game .row {
 	display: flex;
 	flex-direction:row;
 	width: 100%;
-	justify-content: space-around;
+	justify-content: flex-start;
 }
 #game .cell {
 	height: 2em;
@@ -38,6 +36,7 @@ display: flex;
 	box-sizing: border-box;
 	background-color: blue;
 	text-align: center;
+	margin: 0.16em;
 }
 #game .cell.checked {
 	background-color: #eee;
@@ -47,4 +46,5 @@ display: flex;
 	height: 100%;
 	color: orange;
 	font-weight: bold;
+	vertical-align: middle;
 }

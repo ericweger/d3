@@ -1,15 +1,15 @@
 $(function initialize() {
-	newGame(5,5,4)
+	newGame(6,5,6)
 });
 function newGame(h, w, m) {
 	a = [];
 	for (let i = 0; i < h; i++) {
 		a[i] = [];
 		for (let j = 0; j < w; j++) {
-			a[i][j] = {nearby: 0, checked: false};
+			a[i][j] = {nearby: 0, x: j, y: i, checked: false};
 		};
 	};
-	
+
 	let p = 0;
 	while (p < m) {
 		let x = Math.floor(Math.random() * w);
@@ -38,6 +38,7 @@ function newGame(h, w, m) {
 		.data(a);
 	var cells = rows.selectAll(".cell")
 		.data(function(d, i) {return d})
+		.html(null)
 		.classed("checked", false)
 		.on("click", reveal)
 		.enter()
@@ -58,6 +59,47 @@ function newGame(h, w, m) {
 
 	rows.exit().remove();
 };
-function reveal(d, i) {
-	d3.select(this).classed("checked", true).on("click", null);
-}
+function reveal(data, index) {
+	let content = [];
+	if (data.mine) {
+		content[0] = "M"
+	} else {
+		if (data.nearby == 0) {
+			content[0] =  ""
+		} else {
+			content[0] = data.nearby;
+		}
+	};
+
+	let current = d3.select(this)
+		.classed("checked", true)
+		.datum(function(d,i) {d.checked = true; return d;})
+		.on("click", null);
+
+	current.selectAll("p")
+		.data(content)
+		.enter()
+		.append("p")
+		.text(function(d,i) {return d.toString()});
+
+		if (data.mine) {
+			alert("You Lose");
+
+		} else if (data.nearby == 0) {
+			let surrounding = d3.selectAll(".cell")
+				.filter(function(d,i) {return d.checked == false;})
+				.filter(function(d,i) {return d.x <= data.x + 1;})
+				.filter(function(d,i) {return d.x >= data.x - 1;})
+				.filter(function(d,i) {return d.y <= data.y + 1;})
+				.filter(function(d,i) {return d.y >= data.y - 1;})
+				.filter(function(d,i) {return d.x != data.x || d.y != data.y});
+			if (surrounding) {
+				surrounding.each(reveal);
+			};
+
+		};
+
+		
+		
+		
+};
