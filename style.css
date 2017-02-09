@@ -5,3 +5,39 @@ body {
 	margin: 0;
 	padding: 0;
 }
+#gamecontainer {
+margin: 2rem;
+display: flex;
+
+}
+#controls {
+
+}
+#game {
+	width: 11em;
+	height: 11em;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-content: space-around;
+	border: 1px solid black;
+	background-color: black;
+}
+#game .cell {
+	height: 2em;
+	width: 2em;
+	border: 3px outset #999;
+	box-sizing: border-box;
+	background-color: blue;
+	text-align: center;
+}
+#game .cell.checked {
+	background-color: #eee;
+	border: none;
+}
+#game .cell.checked p {
+	height: 100%;
+	color: orange;
+	font-weight: bold;
+}
