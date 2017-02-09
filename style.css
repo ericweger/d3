@@ -11,18 +11,25 @@ display: flex;
 
 }
 #controls {
-
+	order: 2;
+	margin-left: 2em;
 }
 #game {
 	width: 11em;
 	height: 11em;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	flex-wrap: wrap;
 	justify-content: space-around;
 	align-content: space-around;
 	border: 1px solid black;
 	background-color: black;
+}
+#game .row {
+	display: flex;
+	flex-direction:row;
+	width: 100%;
+	justify-content: space-around;
 }
 #game .cell {
 	height: 2em;

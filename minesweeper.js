@@ -9,7 +9,7 @@ function newGame(h, w, m) {
 			a[i][j] = {nearby: 0, checked: false};
 		};
 	};
-	console.log(a);
+	
 	let p = 0;
 	while (p < m) {
 		let x = Math.floor(Math.random() * w);
@@ -33,4 +33,31 @@ function newGame(h, w, m) {
 
 	console.log(a);
 
+	var rows = d3.select("#game")
+		.selectAll(".row")
+		.data(a);
+	var cells = rows.selectAll(".cell")
+		.data(function(d, i) {return d})
+		.classed("checked", false)
+		.on("click", reveal)
+		.enter()
+		.append("div")
+		.classed("cell", true)
+		.on("click", reveal)
+		.exit().remove();
+
+	rows.enter()
+		.append("div")
+		.classed("row", true)
+		.selectAll(".cell")
+		.data(function(d, i) {return d})
+		.enter()
+		.append("div")
+		.classed("cell", true)
+		.on("click", reveal);
+
+	rows.exit().remove();
 };
+function reveal(d, i) {
+	d3.select(this).classed("checked", true).on("click", null);
+}
