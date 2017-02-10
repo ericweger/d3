@@ -1,8 +1,15 @@
+var msHeight;
+var msWidth;
+var msMines;
+
 $(function initialize() {
 	newGame(6,5,6)
 });
 function newGame(h, w, m) {
-	a = [];
+	msHeight = h;
+	msWidth = w;
+	msMines = m;
+	var a = [];
 	for (let i = 0; i < h; i++) {
 		a[i] = [];
 		for (let j = 0; j < w; j++) {
@@ -39,13 +46,13 @@ function newGame(h, w, m) {
 	var cells = rows.selectAll(".cell")
 		.data(function(d, i) {return d})
 		.html(null)
-		.classed("checked", false)
-		.on("click", reveal)
-		.enter()
+		.classed("checked mine maybeMine", false)
+		.on("click", reveal);
+
+	cells.enter()
 		.append("div")
 		.classed("cell", true)
-		.on("click", reveal)
-		.exit().remove();
+		.on("click", reveal);
 
 	rows.enter()
 		.append("div")
@@ -58,6 +65,7 @@ function newGame(h, w, m) {
 		.on("click", reveal);
 
 	rows.exit().remove();
+	cells.exit().remove();
 };
 function reveal(data, index) {
 	let content = [];
@@ -76,30 +84,50 @@ function reveal(data, index) {
 		.datum(function(d,i) {d.checked = true; return d;})
 		.on("click", null);
 
-	current.selectAll("p")
+	current.selectAll("div")
 		.data(content)
 		.enter()
-		.append("p")
+		.append("div")
 		.text(function(d,i) {return d.toString()});
 
-		if (data.mine) {
-			alert("You Lose");
+	if (data.mine) {
+		winLossHandler(false, this);
 
-		} else if (data.nearby == 0) {
-			let surrounding = d3.selectAll(".cell")
-				.filter(function(d,i) {return d.checked == false;})
-				.filter(function(d,i) {return d.x <= data.x + 1;})
-				.filter(function(d,i) {return d.x >= data.x - 1;})
-				.filter(function(d,i) {return d.y <= data.y + 1;})
-				.filter(function(d,i) {return d.y >= data.y - 1;})
-				.filter(function(d,i) {return d.x != data.x || d.y != data.y});
-			if (surrounding) {
-				surrounding.each(reveal);
-			};
-
+	} else if (data.nearby == 0) {
+		let surrounding = d3.selectAll(".cell")
+			.filter(function(d,i) {return d.checked == false;})
+			.filter(function(d,i) {return d.x <= data.x + 1;})
+			.filter(function(d,i) {return d.x >= data.x - 1;})
+			.filter(function(d,i) {return d.y <= data.y + 1;})
+			.filter(function(d,i) {return d.y >= data.y - 1;})
+			.filter(function(d,i) {return d.x != data.x || d.y != data.y});
+		if (surrounding) {
+			surrounding.each(reveal);
 		};
+	};
+	winChecker();
+};
 
-		
-		
-		
+function winLossHandler(win, cell) {
+	 let cells = d3.select("#game")
+		.selectAll(".row")
+		.selectAll(".cell")
+		.on("click", null);
+	if (win) {
+		alert("You Win!")
+	} else {
+		cells.filter(function(d,i) {return d.mine;}).classed("mine", true);
+		alert("You Lose");
+	};
+};
+
+function winChecker() {
+	var count = d3.select("#game")
+		.selectAll(".cell")
+		.filter(function(d,i) {return !d.checked;})
+		.size();
+	if (count == msMines) { winLossHandler(true); };
+};
+function flagMine(cell) {
+// Use oncontextmenu event and return false
 };

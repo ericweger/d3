@@ -23,6 +23,9 @@ flex-wrap: wrap;
 	background-color: black;
 	padding: 0.08em;
 }
+#game * {
+	user-select:none;
+}
 #game .row {
 	display: flex;
 	flex-direction:row;
@@ -32,19 +35,26 @@ flex-wrap: wrap;
 #game .cell {
 	height: 2em;
 	width: 2em;
-	border: 3px outset #999;
+	border: 3px outset #999999;
 	box-sizing: border-box;
 	background-color: blue;
 	text-align: center;
+	vertical-align: middle;
 	margin: 0.16em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 #game .cell.checked {
-	background-color: #eee;
+	background-color: #EEEEEE;
 	border: none;
 }
-#game .cell.checked p {
-	height: 100%;
-	color: orange;
+#game .cell.checked>div {
 	font-weight: bold;
-	vertical-align: middle;
+}
+#game .cell.maybeMine {
+	
+}
+#game .cell.mine {
+	background-color: #BB0000;
 }
