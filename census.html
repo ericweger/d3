@@ -10,8 +10,16 @@
 	</head>
 	<body>
 		<div id="chartarea">
+			<div id="chartcontrols">
+				Minimum Population:
+				<input type="number" step="1" onchange="newMinPop(this)">
+				<br>
+				Maximum Population:
+				<input type="number" step="1" onchange="newMaxPop(this)">
+			</div>
 			<svg id="barchart">
 			</svg>
+
 		</div>
 		
 		<div id="rawdata"></div>

@@ -4,8 +4,8 @@ var income = "B19013_001E";
 var median_gross_rent = "B25064_001E";
 
 //Filter Variables
-var minPop;
-var maxPop;
+var minPop = null;
+var maxPop = null;
 
 $(function initialize() {
     sdk = new CitySdk();
@@ -35,49 +35,63 @@ var callback = function callback(response) {
     update();
 };
 
-function update(field, value) {
+function update() {
+    console.log("minPop: " + minPop);
+    console.log("maxPop: " + maxPop);
 
-    data = fullData.filter(popFilter);
-    var rows = d3.select("#rawdata").selectAll("p").data(data).text(function(d,i) {return d["NAME"]});
-    rows.enter().append("p").text(function(d,i) {return d["NAME"] + " | Population: " + d[population] + ", Avg. Income: $" + d[income] + "/year, Median Gross Rent: $" + d[median_gross_rent] + "/month"});
+    var data = fullData.filter(popFilter);
+    var rows = d3.select("#rawdata").selectAll("p")
+        .data(data)
+        .text(function(d,i) {return d["NAME"] + " | Population: " + d[population] + ", Avg. Income: $" + d[income] + "/year, Median Gross Rent: $" + d[median_gross_rent] + "/month"});
+    rows.enter().append("p")
+        .text(function(d,i) {return d["NAME"] + " | Population: " + d[population] + ", Avg. Income: $" + d[income] + "/year, Median Gross Rent: $" + d[median_gross_rent] + "/month"});
     rows.exit().remove();
 
     
 
     var bars = d3.select("#barchart")
-    .selectAll("rect")
-    .data(data);
+        .selectAll("rect")
+        .data(data);
 
     var y = d3.scaleLinear()
         .domain([0, d3.max(data.map( function(d) { return Number(d[population]); } ))])
         .range([0, 800]);
-    console.log(data.map( function(d) { return Number(d[population]); } ));
-    console.log(d3.max(data.map( function(d) { return Number(d[population]); } )));
+
+    var x = d3.scaleBand()
+        .domain(data.map(function(d) { return d["NAME"]; }))
+        .padding(0.3);
 
     bars.attr("height", function(d,i) { return y(d[population]); })
-    .attr("width", 20)
-    .attr("x", function(d,i) { return 30 * i; })
-    .attr("y", function(d,i) {return 800 - y(d[population]);});
-    console.log(bars);
+        .attr("width", function(d,i) { return x.bandwidth() * 100 + "%"; })
+        .attr("x", function(d,i) { return x(d["NAME"]) * 100 + "%"; })
+        .attr("y", function(d,i) {return 800 - y(d[population]);});
     bars.enter()
-    .append("rect")
-    .attr("height", function(d,i) { return y(d[population]);})
-    .attr("width", 20)
-    .attr("x", function(d,i) { return 30 * i; })
-    .attr("y", function(d,i) {return 800 - y(d[population]);});
+        .append("rect")
+        .attr("height", function(d,i) { return y(d[population]);})
+        .attr("width", function(d,i) { return x.bandwidth() * 100 + "%"; })
+        .attr("x", function(d,i) { return x(d["NAME"]) * 100 + "%"; })
+        .attr("y", function(d,i) {return 800 - y(d[population]);});
     console.log(bars);
     bars.exit().remove();
 };
-
+function newMinPop(field) {
+    console.log(field.value);
+    minPop = field.value;
+    update();
+}
+function newMaxPop(field) {
+    maxPop = field.value;
+    update();
+}
 function popFilter(place) {
-    if (minPop) {
-        if (maxPop) {
-            return place[population] >= minPop && place[population] <= maxPop;
+    if (minPop > 0) {
+        if (maxPop > 0) {
+            return Number(place[population]) >= minPop && Number(place[population]) <= maxPop;
         } else {
-            return place[population] >= minPop;
+            return Number(place[population]) >= minPop;
         };
     } else if (maxPop) {
-        return place[population] <= maxPop;
+        return Number(place[population]) <= maxPop;
     } else {
         return true;
     };
