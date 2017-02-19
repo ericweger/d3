@@ -27,17 +27,49 @@ $(function initialize() {
 
 function allCall() {
 	let request = {
-		state : "WA",
-		level : "state",
+		level : "us",
 		sublevel : true,
 		variables : [
 			population,
 			income,
 			median_gross_rent,
-			
-		]
-	}
-}
+			median_home_value,
+			employment_unemployed,
+			commute_time
+		],
+		api : "acs5",
+		year : "2014"
+	};
+
+	census.apiRequest(request, stateCall);
+};
+function stateCall(response) {
+	fullData = {};
+	for (var i = 0; i < response["data"].length; i++) {
+		let request = {
+			state : response["data"][i]["state"],
+			level : "state",
+			sublevel : true,
+			variables : [
+				population,
+				income,
+				median_gross_rent,
+				median_home_value,
+				employment_unemployed,
+				commute_time
+			],
+			api : "acs5",
+			year : "2014"
+		};
+
+		census.apiRequest(request, function(response) {
+			fullData[response["data"]["name"]] = response["data"];
+			console.log(response);
+		});
+	};
+	console.log("Full Data:");
+	console.log(fullData);
+};
 function cityCall() {
 	let request = {
 		state : "OR",
@@ -54,10 +86,20 @@ function cityCall() {
 
 	census.apiRequest(request, cityCallback);
 }
-var callback = function cityCallback(response) {
+function cityCallback(response) {
 
 	fullData = response["data"];
 	update();
+};
+
+function allCallback(response) {
+	fullData = response["data"];
+	for (var i = 0; i < response["data"].length; i++) {
+		stateCall(response["data"][i]["state"]);
+	}
+};
+function stateCallback(request) {
+	fullData
 };
 
 function update() {
